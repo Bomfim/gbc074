@@ -9,9 +9,6 @@ ___
 2. Transmissão do ativo digital (e-mail, compartilhamento de arquivos, etc.);
 3. Validação do ativo digital usando a assinatura armazenada no Blockchain e habilitação da instituição que emitiu o ativo;
 
-**Componentes**:
-
-
 **Roteiro de Testes Unitários(RTU)**: 
 * Teste de stress com múltiplos clientes (autenticando e validando documentos);
 * Teste de validação com autorizações inválidas;
