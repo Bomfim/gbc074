@@ -20,7 +20,7 @@ namespace Client
                 // Translate the Message into ASCII.
                 byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
 
-                // Send the message to the connected TcpServer. 
+                // Send the message to the connected TcpServer.
                 stream.Write(data, 0, data.Length);
                 Console.WriteLine("Sent: {0}", message);
 
