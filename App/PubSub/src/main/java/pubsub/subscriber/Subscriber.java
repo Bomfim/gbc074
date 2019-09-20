@@ -30,7 +30,7 @@ public abstract class Subscriber {
 	// Print all messages received by the subscriber
 	public void printMessages() {
 		for (Message message : subscriberMessages) {
-			System.out.println("Match Message –––> " + message.getMatch() + " : " + message.getPayload());
+			System.out.println("Match Message ---> " + message.getMatch() + " : " + message.getPayload());
 		}
 	}
 }
