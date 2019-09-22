@@ -24,7 +24,7 @@ public abstract class Subscriber {
 	// Unsubscribe subscriber with PubSubService for a match.
 	public abstract void unSubscribe(String match, PubSubService pubSubService);
 
-	// Request specifically for messages related to topic from PubSubService
+	// Request specifically for messages related to a match from PubSubService
 	public abstract void getMessagesForSubscriberOfMatch(String match, PubSubService pubSubService);
 
 	// Print all messages received by the subscriber

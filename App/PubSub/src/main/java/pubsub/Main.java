@@ -36,14 +36,14 @@ public class Main {
 		allMatchesSubscriber.addSubscriber("PAL vs SAN", pubSubService);
 
 		// Trying unSubscribing a subscriber
-		// pythonSubscriber.unSubscribe("Python", pubSubService);
+		allMatchesSubscriber.unSubscribe("PAL vs SAN", pubSubService);
 
 		// Broadcast message to all subscribers. After broadcast, messageQueue will be
 		// empty in PubSubService.
 		pubSubService.broadcast();
 
 		// Print messages of each subscriber to see which messages they got
-		System.out.println("Messages of São paulino Subscriber are: ");
+		System.out.println("Messages of Sao paulino Subscriber are: ");
 		SAOSubscriber.printMessages();
 
 		System.out.println("\nMessages of Palmeirense Subscriber are: ");
@@ -62,7 +62,7 @@ public class Main {
 		reporter.publish(Msg5, pubSubService);
 
 		SAOSubscriber.getMessagesForSubscriberOfMatch("SAO vs FLA", pubSubService);
-		System.out.println("\nMessages of São paulino Subscriber now are: ");
+		System.out.println("\nMessages of Sao paulino Subscriber now are: ");
 		SAOSubscriber.printMessages();
 	}
 }

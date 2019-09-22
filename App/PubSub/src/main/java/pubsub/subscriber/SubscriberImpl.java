@@ -21,7 +21,7 @@ public class SubscriberImpl extends Subscriber {
 	// Request specifically for messages related to a match from PubSubService
 	@Override
 	public void getMessagesForSubscriberOfMatch(String match, PubSubService pubSubService) {
-		pubSubService.getMessagesForSubscriberOfTopic(match, this);
+		pubSubService.getMessagesForSubscriberOfMatch(match, this);
 
 	}
 

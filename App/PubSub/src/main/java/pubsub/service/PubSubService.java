@@ -12,7 +12,7 @@ import pubsub.subscriber.Subscriber;
 
 public class PubSubService {
 
-	// Keeps set of subscriber topic wise, using set to prevent duplicates.
+	// Keeps set of subscriber match wise, using set to prevent duplicates.
 	Map<String, Set<Subscriber>> subscribersMatchMap = new HashMap<String, Set<Subscriber>>();
 
 	// Holds messages published by publishers.
@@ -57,9 +57,9 @@ public class PubSubService {
 				Message message = messagesQueue.remove();
 				String match = message.getMatch();
 
-				Set<Subscriber> subscribersOfTopic = subscribersMatchMap.get(match);
+				Set<Subscriber> subscribersOfMatch = subscribersMatchMap.get(match);
 
-				for (Subscriber subscriber : subscribersOfTopic) {
+				for (Subscriber subscriber : subscribersOfMatch) {
 					// add broadcasted message to subscribers message queue
 					List<Message> subscriberMessages = subscriber.getSubscriberMessages();
 					subscriberMessages.add(message);
@@ -70,7 +70,7 @@ public class PubSubService {
 	}
 
 	// Sends messages about a match for subscriber at any point
-	public void getMessagesForSubscriberOfTopic(String match, Subscriber subscriber) {
+	public void getMessagesForSubscriberOfMatch(String match, Subscriber subscriber) {
 		if (messagesQueue.isEmpty()) {
 			System.out.println("No messages from publishers to display");
 		} else {
