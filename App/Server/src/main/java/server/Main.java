@@ -21,9 +21,9 @@ public class Main {
 
 				if (!isReporter) {
 					isReporter = true;
-					new ServerThread(socket, isReporter).start();
+					new ReporterThread(socket).start();
 				} else {
-					new ServerThread(socket, false).start();
+					new FanThread(socket).start();
 				}
 			}
 
