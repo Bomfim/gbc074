@@ -25,9 +25,9 @@ public class Main {
 
 			OutputStream output = socket.getOutputStream();
 			PrintWriter writer = new PrintWriter(output, true);
-			
+
 			System.out.println("\nAre you a reporter (y/n): ");
-			
+
 			if (scanner.nextLine().equals("y")) {
 				System.out.println("I'm the reporter \\o//");
 				while (true) {
@@ -37,14 +37,13 @@ public class Main {
 			} else {
 				System.out.println("I'm a fan!");
 				while (true) {
-					System.out.println(reader.readLine());
+					text = reader.readLine();
+					System.out.println(text);
 				}
 			}
 			// scanner.close();
 			// socket.close();
-		} catch (
-
-		UnknownHostException ex) {
+		} catch (UnknownHostException ex) {
 			scanner.close();
 			System.out.println("Server not found: " + ex.getMessage());
 

@@ -9,6 +9,8 @@ public class Main {
 	public static void main(String args[]) {
 
 		int port = 50051;
+		boolean isReporter = false;
+
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
 
 			System.out.println("Server is listening on port " + port);
@@ -17,8 +19,12 @@ public class Main {
 				Socket socket = serverSocket.accept();
 				System.out.println("New client connected");
 
-				new ServerThread(socket).start();
-
+				if (!isReporter) {
+					isReporter = true;
+					new ServerThread(socket, isReporter).start();
+				} else {
+					new ServerThread(socket, false).start();
+				}
 			}
 
 		} catch (IOException ex) {

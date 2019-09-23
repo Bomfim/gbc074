@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Collections;
 import java.util.List;
 import pubsub.Message;
 import pubsub.publisher.Publisher;
@@ -17,13 +18,15 @@ import pubsub.subscriber.SubscriberImpl;
 
 public class ServerThread extends Thread {
     private Socket socket;
-    private PubSubService pubSubService = new PubSubService();
-    private boolean isReporter = false;
+    private boolean isReporter;
 
-    public ServerThread(Socket socket) {
+    public ServerThread(Socket socket, boolean isReporter) {
         this.socket = socket;
+        this.isReporter = isReporter;
+
     }
 
+    @Override
     public void run() {
         try {
             InputStream input = this.socket.getInputStream();
@@ -32,37 +35,44 @@ public class ServerThread extends Thread {
             OutputStream output = this.socket.getOutputStream();
             PrintWriter writer = new PrintWriter(output, true);
 
-            if (!this.isReporter) {
+            if (this.isReporter) {
+                System.out.println("New reporter!\n");
                 Publisher reporter = new PublisherImpl();
                 while (true) {
-                    Message m = new Message("SAO vs FLA", reader.readLine());
-                    reporter.publish(m, this.pubSubService);
-                    this.pubSubService.broadcast();
+                    String text = reader.readLine();
+                    Message m = new Message("SAO vs FLA", text);
+                    reporter.publish(m);
+                    PubSubService.getInstance().broadcast();
                 }
             } else {
+                System.out.println("New fan!\n");
+                
                 Subscriber fan = new SubscriberImpl();
-                List<Message> subscriberMessages;
 
                 // TODO treat witch match fan will choose.
-                fan.addSubscriber("SAO vs FLA", this.pubSubService);
-                
+                fan.addSubscriber("SAO vs FLA");
+
                 while (true) {
+                    List<Message> subscriberMessages;
+                    // fan.getMessagesForSubscriberOfMatch("SAO");
+                    // fan.printMessages();
+                    Thread.sleep(2000);
+
                     subscriberMessages = fan.getSubscriberMessages();
+
                     if (!subscriberMessages.isEmpty()) {
                         for (Message message : subscriberMessages) {
                             writer.println("Reporter: " + message.getMatch() + " : " + message.getPayload());
                         }
-                        Thread.sleep(1000);
-                        // fan.setSubscriberMessages(Collections.<Message>emptyList());
                     }
+                    // fan.setSubscriberMessages(Collections.<Message>emptyList());
                 }
             }
         } catch (IOException ex) {
             System.out.println("Server exception: " + ex.getMessage());
             ex.printStackTrace();
-        } catch (InterruptedException ex) {
-            System.out.println("Server exception: " + ex.getMessage());
-            ex.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

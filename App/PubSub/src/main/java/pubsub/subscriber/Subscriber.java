@@ -3,7 +3,6 @@ package pubsub.subscriber;
 import java.util.ArrayList;
 import java.util.List;
 import pubsub.Message;
-import pubsub.service.PubSubService;
 
 public abstract class Subscriber {
 
@@ -19,13 +18,13 @@ public abstract class Subscriber {
 	}
 
 	/// Add subscriber with PubSubService for a match.
-	public abstract void addSubscriber(String match, PubSubService pubSubService);
+	public abstract void addSubscriber(String match);
 
 	// Unsubscribe subscriber with PubSubService for a match.
-	public abstract void unSubscribe(String match, PubSubService pubSubService);
+	public abstract void unSubscribe(String match);
 
 	// Request specifically for messages related to a match from PubSubService
-	public abstract void getMessagesForSubscriberOfMatch(String match, PubSubService pubSubService);
+	public abstract void getMessagesForSubscriberOfMatch(String match);
 
 	// Print all messages received by the subscriber
 	public void printMessages() {

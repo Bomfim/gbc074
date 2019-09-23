@@ -10,13 +10,22 @@ import java.util.Set;
 import pubsub.Message;
 import pubsub.subscriber.Subscriber;
 
-public class PubSubService {
+public final class PubSubService {
+
+	private static PubSubService INSTANCE;
+
+	public static synchronized PubSubService getInstance() {
+		if (INSTANCE == null) {
+			INSTANCE = new PubSubService();
+		}	
+		return INSTANCE;
+	}
 
 	// Keeps set of subscriber match wise, using set to prevent duplicates.
-	Map<String, Set<Subscriber>> subscribersMatchMap = new HashMap<String, Set<Subscriber>>();
+	public Map<String, Set<Subscriber>> subscribersMatchMap = new HashMap<String, Set<Subscriber>>();
 
 	// Holds messages published by publishers.
-	Queue<Message> messagesQueue = new LinkedList<Message>();
+	public Queue<Message> messagesQueue = new LinkedList<Message>();
 
 	// Adds message sent by publisher to queue
 	public void addMessageToQueue(Message message) {
