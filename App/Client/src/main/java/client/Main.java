@@ -25,20 +25,23 @@ public class Main {
 
 			OutputStream output = socket.getOutputStream();
 			PrintWriter writer = new PrintWriter(output, true);
-
-			writer.println("is there a reporter(y/n) ?");
-			if (reader.readLine().equals("n")) {
+			
+			System.out.println("\nAre you a reporter (y/n): ");
+			
+			if (scanner.nextLine().equals("y")) {
 				System.out.println("I'm the reporter \\o//");
 				while (true) {
 					text = scanner.nextLine();
 					writer.println(text);
 				}
 			} else {
+				System.out.println("I'm a fan!");
 				while (true) {
-					System.out.println("I'm a fan!");
 					System.out.println(reader.readLine());
 				}
 			}
+			// scanner.close();
+			// socket.close();
 		} catch (
 
 		UnknownHostException ex) {
