@@ -5,8 +5,8 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
-  	<module>PubSub</module>
-  	<module>Client</module>
-  	<module>Server</module>
+    <module>PubSub</module>
+    <module>Client</module>
+    <module>Server</module>
   </modules>
 </project>

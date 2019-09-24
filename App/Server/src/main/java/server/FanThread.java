@@ -1,30 +1,57 @@
 package server;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
-import pubsub.service.PubSubService;
+import java.util.List;
+
+import pubsub.Message;
 import pubsub.subscriber.Subscriber;
 import pubsub.subscriber.SubscriberImpl;
 
 public class FanThread extends Thread {
+    private Socket socket;
 
-	private Socket socket;
-	private PubSubService pubSubService;
+    public FanThread(Socket socket) {
+        this.socket = socket;
+    }
 
-	public FanThread(Socket socket, PubSubService pubSubService) {
-		this.socket = socket;
-		this.pubSubService = pubSubService;
-	}
+    @Override
+    public void run() {
+        try {
+            OutputStream output = this.socket.getOutputStream();
+            PrintWriter writer = new PrintWriter(output, true);
 
-	public void run() {
-		try {
+            System.out.println("New fan!\n");
 
-			Subscriber fan = new SubscriberImpl();
+            Subscriber fan = new SubscriberImpl();
 
-			socket.close();
-		} catch (IOException ex) {
-			System.out.println("Server exception: " + ex.getMessage());
-			ex.printStackTrace();
-		}
-	}
+            // TODO treat witch match fan will choose.
+            fan.addSubscriber("SAO vs FLA");
+
+            while (true) {
+                List<Message> subscriberMessages;
+                // fan.getMessagesForSubscriberOfMatch("SAO vs FLA");
+                // fan.printMessages();
+
+                subscriberMessages = fan.getSubscriberMessages();
+
+                if (!subscriberMessages.isEmpty()) {
+                    for (Message message : subscriberMessages) {
+                        writer.println("Reporter: " + message.getMatch() + " : " + message.getPayload());
+                    }
+                    subscriberMessages.clear();
+                    fan.setSubscriberMessages(subscriberMessages);
+                }
+                Thread.sleep(2000);
+            }
+
+        } catch (IOException ex) {
+            System.out.println("Server exception: " + ex.getMessage());
+            ex.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

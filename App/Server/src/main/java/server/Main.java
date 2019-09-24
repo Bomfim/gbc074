@@ -2,13 +2,11 @@ package server;
 
 import dao.MatchDao;
 import entity.Match;
-import pubsub.service.PubSubService;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
-
 
 public class Main {
 
@@ -18,22 +16,20 @@ public class Main {
 
 		int port = 50051;
 		boolean isReporter = false;
+
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
-			
-			PubSubService pubSubService = new PubSubService();
-			
+
 			System.out.println("Server is listening on port " + port);
 
 			while (true) {
 				Socket socket = serverSocket.accept();
 				System.out.println("New client connected");
 
-				if (isReporter) {
+				if (!isReporter) {
 					isReporter = true;
-					new ReporterThread(socket, pubSubService).start();
-				}
-				else {
-					new FanThread(socket, pubSubService).start();
+					new ReporterThread(socket).start();
+				} else {
+					new FanThread(socket).start();
 				}
 			}
 

@@ -10,13 +10,22 @@ import java.util.Set;
 import pubsub.Message;
 import pubsub.subscriber.Subscriber;
 
-public class PubSubService {
+public final class PubSubService {
 
-	// Keeps set of subscriber topic wise, using set to prevent duplicates.
-	Map<String, Set<Subscriber>> subscribersMatchMap = new HashMap<String, Set<Subscriber>>();
+	private static PubSubService INSTANCE;
+
+	public static synchronized PubSubService getInstance() {
+		if (INSTANCE == null) {
+			INSTANCE = new PubSubService();
+		}	
+		return INSTANCE;
+	}
+
+	// Keeps set of subscriber match wise, using set to prevent duplicates.
+	public Map<String, Set<Subscriber>> subscribersMatchMap = new HashMap<String, Set<Subscriber>>();
 
 	// Holds messages published by publishers.
-	Queue<Message> messagesQueue = new LinkedList<Message>();
+	public Queue<Message> messagesQueue = new LinkedList<Message>();
 
 	// Adds message sent by publisher to queue
 	public void addMessageToQueue(Message message) {
@@ -57,9 +66,9 @@ public class PubSubService {
 				Message message = messagesQueue.remove();
 				String match = message.getMatch();
 
-				Set<Subscriber> subscribersOfTopic = subscribersMatchMap.get(match);
+				Set<Subscriber> subscribersOfMatch = subscribersMatchMap.get(match);
 
-				for (Subscriber subscriber : subscribersOfTopic) {
+				for (Subscriber subscriber : subscribersOfMatch) {
 					// add broadcasted message to subscribers message queue
 					List<Message> subscriberMessages = subscriber.getSubscriberMessages();
 					subscriberMessages.add(message);
@@ -70,7 +79,7 @@ public class PubSubService {
 	}
 
 	// Sends messages about a match for subscriber at any point
-	public void getMessagesForSubscriberOfTopic(String match, Subscriber subscriber) {
+	public void getMessagesForSubscriberOfMatch(String match, Subscriber subscriber) {
 		if (messagesQueue.isEmpty()) {
 			System.out.println("No messages from publishers to display");
 		} else {

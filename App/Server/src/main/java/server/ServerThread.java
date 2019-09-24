@@ -1,36 +1,75 @@
-package server;
+// package server;
 
-import java.io.*;
-import java.net.*;
+// import java.io.BufferedReader;
+// import java.io.IOException;
+// import java.io.InputStream;
+// import java.io.InputStreamReader;
+// import java.io.OutputStream;
+// import java.io.PrintWriter;
+// import java.net.Socket;
+// import java.util.List;
+// import pubsub.Message;
+// import pubsub.publisher.Publisher;
+// import pubsub.publisher.PublisherImpl;
+// import pubsub.service.PubSubService;
+// import pubsub.subscriber.Subscriber;
+// import pubsub.subscriber.SubscriberImpl;
 
-public class ServerThread extends Thread {
-	private Socket socket;
+// public class ServerThread extends Thread {
+//     private Socket socket;
+//     private boolean isReporter;
 
-	public ServerThread(Socket socket) {
-		this.socket = socket;
-	}
+//     public ServerThread(Socket socket, boolean isReporter) {
+//         this.socket = socket;
+//         this.isReporter = isReporter;
+//     }
 
-	public void run() {
-		try {
-			InputStream input = socket.getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+//     @Override
+//     public void run() {
+//         try {
+//             InputStream input = this.socket.getInputStream();
+//             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-			OutputStream output = socket.getOutputStream();
-			PrintWriter writer = new PrintWriter(output, true);
+//             OutputStream output = this.socket.getOutputStream();
+//             PrintWriter writer = new PrintWriter(output, true);
 
-			String text;
+//             if (this.isReporter) {
+//                 System.out.println("New reporter!\n");
+//                 Publisher reporter = new PublisherImpl();
+//                 while (true) {
+//                     String text = reader.readLine();
+//                     Message m = new Message("SAO vs FLA", text);
+//                     reporter.publish(m);
+//                     PubSubService.getInstance().broadcast();
+//                 }
+//             } else {
+//                 System.out.println("New fan!\n");
 
-			do {
-				text = reader.readLine();
-				String reverseText = new StringBuilder(text).reverse().toString();
-				writer.println("Server: " + reverseText);
+//                 Subscriber fan = new SubscriberImpl();
 
-			} while (!text.equals("bye"));
+//                 fan.addSubscriber("SAO vs FLA");
 
-			socket.close();
-		} catch (IOException ex) {
-			System.out.println("Server exception: " + ex.getMessage());
-			ex.printStackTrace();
-		}
-	}
-}
+//                 while (true) {
+//                     List<Message> subscriberMessages;
+//                     // fan.getMessagesForSubscriberOfMatch("SAO");
+//                     // fan.printMessages();
+//                     Thread.sleep(2000);
+
+//                     subscriberMessages = fan.getSubscriberMessages();
+
+//                     if (!subscriberMessages.isEmpty()) {
+//                         for (Message message : subscriberMessages) {
+//                             writer.println("Reporter: " + message.getMatch() + " : " + message.getPayload());
+//                         }
+//                     }
+//                     // fan.setSubscriberMessages(Collections.<Message>emptyList());
+//                 }
+//             }
+//         } catch (IOException ex) {
+//             System.out.println("Server exception: " + ex.getMessage());
+//             ex.printStackTrace();
+//         } catch (InterruptedException e) {
+//             e.printStackTrace();
+//         }
+//     }
+// }
