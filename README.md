@@ -43,7 +43,7 @@ Primeiramente clone o repositório, certifique-se de possuir a [JDK](https://www
 
 Na raíz do diretório clonado execute:
 
-> mvn clean install
+    mvn clean install
 
 Depois,
 
