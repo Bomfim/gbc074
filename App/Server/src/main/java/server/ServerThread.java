@@ -47,7 +47,6 @@
 
 //                 Subscriber fan = new SubscriberImpl();
 
-//                 // TODO treat witch match fan will choose.
 //                 fan.addSubscriber("SAO vs FLA");
 
 //                 while (true) {
