@@ -41,8 +41,6 @@ public class Main {
 					System.out.println(text);
 				}
 			}
-			// scanner.close();
-			// socket.close();
 		} catch (UnknownHostException ex) {
 			scanner.close();
 			System.out.println("Server not found: " + ex.getMessage());
