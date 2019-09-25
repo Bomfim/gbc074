@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import pubsub.Message;
 import pubsub.publisher.Publisher;
 import pubsub.publisher.PublisherImpl;
@@ -25,12 +28,13 @@ public class ReporterThread extends Thread {
 
             System.out.println("New reporter!\n");
             Publisher reporter = new PublisherImpl();
-            
+
             while (true) {
                 String text = reader.readLine();
-                Message m = new Message("SAO vs FLA", text);
+                Message m = new Message("SAO vs FLA", new SimpleDateFormat("HH:mm").format(new Date()) + ' ' +  text);
                 reporter.publish(m);
                 PubSubService.getInstance().broadcast();
+                new RecordThread(m).start();
             }
 
         } catch (IOException ex) {
