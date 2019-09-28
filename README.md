@@ -3,29 +3,25 @@ ___
 Sistema para acompanhamento de jogos de futebol 
 
  
-É um sistema para torcedores acompanharem o andamento da partida do seu time e visualizar resultados anteriores. 
+É um sistema para torcedores acompanharem o andamento da partida do seu time. 
 
 O sistema tem dois módulos: 
 
--Jornalista esportivo: jornalista entra no sistema, cria informações sobre a partida em uma lista de partidas em andamento, atualiza e envia para o servidor conforme alguma alteração sobre a partida. Ao final da partida muda o status para encerrada e manda para uma lista de partidas anteriores; 
+-Jornalista esportivo: jornalista entra no sistema, cria informações sobre a partida em uma lista de partidas em andamento, atualiza e envia para o servidor conforme alguma alteração sobre a partida; 
 
--Torcedor: o torcedor entra no sistema, escolhe se quer visualizar uma partida em andamento ou encerrada. Caso escolha em andamento pode acompanhar em tempo real o andamento do jogo com base nas informações do jornalista ou pode escolher partidas anteriores e visualizar os resultados. 
+-Torcedor: o torcedor entra no sistema, escolhe qual partida quer acompanhar e pode acompanhar em tempo real o andamento do jogo com base nas informações do jornalista. 
 
 Regras: 
 
 -Somente um jornalista pode acompanhar um determinado jogo e atualizar o servidor; 
 
--Vários jornalistas podem atualizar jogos simultâneos respeitando a regra anterior; 
-
 -Vários clientes podem acompanhar o andamento de todos os jogos; 
-
--Resultados dos jogos devem ficam disponíveis para visualização posterior.   
 
  
 
 Ferramentas: 
 
-A aplicação será desenvolvida em Java e utilizará um banco de dados mongodb. 
+A aplicação será desenvolvida em Java e utilizará o padrão Publish-Subscribe. 
 
 Testes: 
 
