@@ -1,11 +1,11 @@
 package server;
 
+import pubsub.Message;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import pubsub.Message;
 
 public class RecordThread extends Thread {
     private Message message;
