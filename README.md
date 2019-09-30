@@ -45,7 +45,7 @@ Depois,
 
     mvn package
 
-E por último para rodar o servidor:
+E por último, entre na pasta App daí para rodar o servidor:
 
     java -cp '.\Server\target\Server-0.0.1-SNAPSHOT.jar;.\PubSub\target\PubSub-0.0.1-SNAPSHOT.jar' server.Main
 
