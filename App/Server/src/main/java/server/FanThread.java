@@ -1,5 +1,9 @@
 package server;
 
+import pubsub.Message;
+import pubsub.subscriber.Subscriber;
+import pubsub.subscriber.SubscriberImpl;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -7,10 +11,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 import java.util.Scanner;
-
-import pubsub.Message;
-import pubsub.subscriber.Subscriber;
-import pubsub.subscriber.SubscriberImpl;
 
 public class FanThread extends Thread {
     private Socket socket;
@@ -29,7 +29,7 @@ public class FanThread extends Thread {
 
             Subscriber fan = new SubscriberImpl();
             String match = "SAO vs FLA";
-            // TODO treat witch match fan will choose.
+            // TODO treat which match fan will choose.
             fan.addSubscriber(match);
 
             showHistoryMessages(match, writer);
@@ -37,6 +37,7 @@ public class FanThread extends Thread {
             while (true) {
                 List<Message> subscriberMessages;
 
+                // TODO: fix race condition
                 subscriberMessages = fan.getSubscriberMessages();
 
                 if (!subscriberMessages.isEmpty()) {

@@ -1,53 +1,79 @@
 package client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class Main {
 
+	private static final Logger LOGGER = Logger.getLogger( Main.class.getName() );
+	private static final String FAN_MESSAGE_TEMPLATE = "[FAN] => [%s]";
+
+	private static Long connectionTimes = 5L;
+
+	static void ehlo( Socket socket, String code ) throws IOException {
+		PrintWriter writer = new PrintWriter( socket.getOutputStream() );
+		writer.println( code + "\n" );
+		writer.flush();
+	}
+
+	static void fan( Socket socket ) {
+		LOGGER.info( "I'm a fan!" );
+
+		try ( InputStream input = socket.getInputStream();
+			  BufferedReader reader = new BufferedReader( new InputStreamReader( input ) )
+		) {
+			String line;
+
+			while ( ( line = reader.readLine() ) != null ) {
+				LOGGER.info( String.format( FAN_MESSAGE_TEMPLATE, line ) );
+			}
+
+			throw new PeerClosedException( "Closed connection" );
+		} catch ( IOException e ) {
+			LOGGER.info( "Error reader: " + e.getMessage() );
+		}
+	}
+
+	static boolean connect( String hostname, int port ) {
+		try ( Scanner scanner = new Scanner( System.in ) ) {
+			Socket socket = new Socket( hostname, port );
+			LOGGER.info( "Are you a reporter (y/n): " );
+
+			if ( scanner.nextLine().equalsIgnoreCase( "y" ) ) {
+				ehlo( socket, "NEW_REPORTER_CONNECTED" );
+				new Reporter( socket )
+						.run();
+			} else {
+				ehlo( socket, "NEW_FAN_CONNECTED" );
+				fan( socket );
+			}
+
+		} catch ( PeerClosedException | IOException ex ) {
+			LOGGER.info( "Peer disconnected, need to reconnect" );
+			return false;
+		}
+
+		return true;
+	}
+
+	static boolean decrement() {
+		return --connectionTimes > 0;
+	}
+
 	public static void main(String[] args) {
 
-		String hostname = "localhost", text;
-		int port = 50051;
-		Scanner scanner = new Scanner(System.in);
+		while ( !connect( "localhost", 50051 ) && decrement() ) {
+			LOGGER.info( "Need reconnect" );
+		}
 
-		try (Socket socket = new Socket(hostname, port)) {
+		LOGGER.info( "Exiting." );
+	}
 
-			InputStream input = socket.getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-
-			OutputStream output = socket.getOutputStream();
-			PrintWriter writer = new PrintWriter(output, true);
-
-			System.out.println("\nAre you a reporter (y/n): ");
-
-			if (scanner.nextLine().equals("y")) {
-				System.out.println("I'm the reporter \\o//");
-				while (true) {
-					text = scanner.nextLine();
-					writer.println(text);
-				}
-			} else {
-				System.out.println("I'm a fan!");
-				while (true) {
-					text = reader.readLine();
-					System.out.println(text);
-				}
-			}
-		} catch (UnknownHostException ex) {
-			scanner.close();
-			System.out.println("Server not found: " + ex.getMessage());
-
-		} catch (IOException ex) {
-			scanner.close();
-			System.out.println("I/O error: " + ex.getMessage());
+	protected static class PeerClosedException extends RuntimeException {
+		PeerClosedException( String msg ) {
+			super( msg );
 		}
 	}
 }
