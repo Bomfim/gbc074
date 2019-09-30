@@ -17,7 +17,7 @@ public class RecordThread extends Thread {
     @Override
     public void run() {
         try {
-            File file = new File(message.getMatch()+".txt");
+            File file = new File(message.getMatch() + ".txt");
 
             if (file.createNewFile()) {
                 FileWriter writer = new FileWriter(file);

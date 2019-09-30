@@ -15,17 +15,17 @@ public class Main {
 
 		int port = 50051;
 
-		try ( ServerSocket serverSocket = new ServerSocket(port) ) {
+		try (ServerSocket serverSocket = new ServerSocket(port)) {
 
 			System.out.println("Server is listening on port " + port);
 
 			while (true) {
 				Socket socket = serverSocket.accept();
-				System.out.println( "New client connected: " + socket );
-				BufferedReader reader = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
+				System.out.println("New client connected: " + socket);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				String whoIs = reader.readLine();
 
-				if ( whoIs != null &&  whoIs.equals( "NEW_REPORTER_CONNECTED" )) {
+				if (whoIs != null && whoIs.equals("NEW_REPORTER_CONNECTED")) {
 					new ReporterThread(socket).start();
 				} else {
 					new FanThread(socket).start();
