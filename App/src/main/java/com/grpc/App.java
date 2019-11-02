@@ -1,13 +1,16 @@
 package com.grpc;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
+import java.io.IOException;
+
+import io.grpc.*;
+
+public class App {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        Server server = ServerBuilder.forPort(50051).addService(new ReporterServiceImpl()).build();
+
+        server.start();
+
+        System.out.println("Server started at: " + 50051);
+        server.awaitTermination();
     }
 }

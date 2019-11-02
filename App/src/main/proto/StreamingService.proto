@@ -1,0 +1,14 @@
+syntax = "proto3";
+package com.grpc;
+
+message Match {
+
+  int32 id = 1;
+  string players = 2;
+  string comment = 3;
+
+}
+
+service ReporterService {
+  rpc publish(Match) returns (stream Match);
+}
