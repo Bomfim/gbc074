@@ -39,17 +39,17 @@ Primeiramente clone o repositório, certifique-se de possuir a [JDK](https://www
 
 Na raíz do diretório clonado execute:
 
-    mvn clean install
+    mvn clean
 
 Depois,
 
-    mvn package
+    mvn -DskipTests package
 
 E por último, entre na pasta App daí para rodar o servidor:
 
-    java -cp '.\Server\target\Server-0.0.1-SNAPSHOT.jar;.\PubSub\target\PubSub-0.0.1-SNAPSHOT.jar' server.Main
+    mvn exec:java -Dexec.mainClass=com.grpc.App
 
 E o cliente:
     
-    java -cp .\Client\target\Client-0.0.1-SNAPSHOT.jar client.Main
-
+    mvn exec:java -Dexec.mainClass=com.grpc.Client
+    
