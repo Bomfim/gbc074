@@ -1,38 +1,31 @@
 package com.grpc;
 
-import com.grpc.ReporterServiceGrpc.ReporterServiceStub;
+import java.util.Random;
+import java.util.Scanner;
+
+import com.grpc.ReporterServiceGrpc.ReporterServiceBlockingStub;
 import com.grpc.StreamingService.Match;
+import com.grpc.StreamingService.RequestResponse;
 
 import io.grpc.*;
-import io.grpc.stub.StreamObserver;
 
 public class Reporter {
     public static void main(String[] args) throws Exception {
         final ManagedChannel channel = ManagedChannelBuilder.forTarget("localhost:50051").usePlaintext(true).build();
 
-        // ReporterServiceBlockingStub stub =
-        // ReporterServiceGrpc.newBlockingStub(channel);
-        ReporterServiceStub stub = ReporterServiceGrpc.newStub(channel);
+        ReporterServiceBlockingStub stub = ReporterServiceGrpc.newBlockingStub(channel);
+        Scanner s = new Scanner(System.in);
 
-        Match req = Match.newBuilder().setId(2).setPlayers("COR VS PAL").setComment("Olha a batiiiida!").build();
+        while (s.hasNextLine()) {
 
-        stub.publish(req, new StreamObserver<Match>() {
+            Match req = Match.newBuilder().setId(new Random().nextInt(100)).setPlayers("SAO VS FLA").setComment(s.nextLine()).build();
 
-            @Override
-            public void onNext(Match value) {
-                System.out.println(value);
+            RequestResponse res = stub.publish(req);
 
-            }
-
-            @Override
-            public void onError(Throwable t) {
-            }
-
-            @Override
-            public void onCompleted() {
-                channel.shutdownNow();
-            }
-        });
-
+            System.out.println(res);
+        }
+        
+        s.close();
+        channel.shutdownNow();
     }
 }

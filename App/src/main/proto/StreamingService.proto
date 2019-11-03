@@ -14,6 +14,7 @@ message RequestResponse {
     ACK = 0;
     NACK = 1;
   }
+  Status response = 1;
 }
 
 service ReporterService {
@@ -23,5 +24,5 @@ service ReporterService {
 service FanService {
   rpc subscribe(Match) returns (RequestResponse);
   rpc unsubscribe(Match) returns(RequestResponse);
-  rpc getMessagesForSubscriberOfMatch(Match) returns(stream Match);
+  rpc getSubscriberMessages(Match) returns(stream Match);
 }

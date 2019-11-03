@@ -2,26 +2,39 @@ package com.grpc;
 
 import com.grpc.ReporterServiceGrpc.ReporterServiceImplBase;
 import com.grpc.StreamingService.Match;
+import com.grpc.StreamingService.RequestResponse;
+import com.grpc.StreamingService.RequestResponse.Status;
+import com.pubsub.Message;
+import com.pubsub.publisher.Publisher;
+import com.pubsub.publisher.PublisherImpl;
+import com.pubsub.service.PubSubService;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import io.grpc.stub.StreamObserver;
 
 public class ReporterServiceImpl extends ReporterServiceImplBase {
 
+    Publisher reporter = new PublisherImpl();
+    Message m;
+
     @Override
-    public void publish(Match request, StreamObserver<Match> responseObserver) {
-        // HelloRequest has toString auto-generated.
-        System.out.println(request);
+    public void publish(Match request, StreamObserver<RequestResponse> responseObserver) {
 
-        // You must use a builder to construct a new Protobuffer object
-        Match response = Match.newBuilder().setId(0).setPlayers("")
-                .setComment("").build();
+        try {
+            m = new Message(request.getId(), request.getPlayers(),
+                    new SimpleDateFormat("HH:mm").format(new Date()) + ' ' + request.getComment());
+            reporter.publish(m);
+            PubSubService.getInstance().broadcast();
+            new RecordThread(m).start();
 
-        // Use responseObserver to send a single response back
-        responseObserver.onNext(response);
-        responseObserver.onNext(response);
-        responseObserver.onNext(response);
-        responseObserver.onNext(response);
+            RequestResponse response = RequestResponse.newBuilder().setResponse(Status.ACK).build();
+            responseObserver.onNext(response);
 
-        // When you are done, you must call onCompleted.
+        } catch (Exception e) {
+            RequestResponse response = RequestResponse.newBuilder().setResponse(Status.NACK).build();
+            responseObserver.onNext(response);
+        }
         responseObserver.onCompleted();
     }
 }
