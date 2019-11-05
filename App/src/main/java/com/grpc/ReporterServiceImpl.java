@@ -15,7 +15,7 @@ import io.grpc.stub.StreamObserver;
 
 public class ReporterServiceImpl extends ReporterServiceImplBase {
 
-    Publisher reporter = new PublisherImpl();
+    Publisher reporter = new PublisherImpl("192.168.0.1");
     Message m;
 
     @Override
@@ -25,7 +25,7 @@ public class ReporterServiceImpl extends ReporterServiceImplBase {
             m = new Message(request.getId(), request.getPlayers(),
                     new SimpleDateFormat("HH:mm").format(new Date()) + ' ' + request.getComment());
             reporter.publish(m);
-            PubSubService.getInstance().broadcast();
+            PubSubService.getInstance(((PublisherImpl)reporter).getRequestId()).broadcast();
             new RecordThread(m).start();
 
             RequestResponse response = RequestResponse.newBuilder().setResponse(Status.ACK).build();
