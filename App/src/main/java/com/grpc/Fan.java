@@ -7,7 +7,8 @@ import com.grpc.FanServiceGrpc.FanServiceStub;
 import com.grpc.StreamingService.Match;
 import com.grpc.StreamingService.RequestResponse;
 
-import io.grpc.*;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 
 public class Fan {
@@ -23,8 +24,7 @@ public class Fan {
         RequestResponse res = blockingStub.subscribe(req);
 
         if (res.getResponse() == RequestResponse.Status.ACK) {
-
-            stub.getSubscriberMessages(req, new StreamObserver<StreamingService.Match>() {
+            stub.getSubscriberHistoryMessages(req, new StreamObserver<Match>() {
 
                 @Override
                 public void onNext(Match value) {
@@ -38,11 +38,35 @@ public class Fan {
 
                 @Override
                 public void onCompleted() {
-                    s.close();
-                    channel.shutdownNow();
                 }
             });
 
+            while (true) {
+                stub.getSubscriberMessages(req, new StreamObserver<Match>() {
+
+                    @Override
+                    public void onNext(Match value) {
+                        System.out.println(value.getPlayers());
+                        System.out.println(value.getComment());
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                        if (!channel.isShutdown()) {
+
+                        } else {
+                            s.close();
+                            channel.shutdownNow();
+                        }
+                    }
+                });
+                Thread.sleep(5000);
+            }
         }
     }
 }

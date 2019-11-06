@@ -1,13 +1,14 @@
 package com.grpc;
 
-import java.util.Random;
 import java.util.Scanner;
+import java.util.UUID;
 
 import com.grpc.ReporterServiceGrpc.ReporterServiceBlockingStub;
 import com.grpc.StreamingService.Match;
 import com.grpc.StreamingService.RequestResponse;
 
-import io.grpc.*;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 
 public class Reporter {
     public static void main(String[] args) throws Exception {
@@ -18,7 +19,7 @@ public class Reporter {
 
         while (s.hasNextLine()) {
 
-            Match req = Match.newBuilder().setId(new Random().nextInt(100)).setPlayers("SAO VS FLA").setComment(s.nextLine()).build();
+            Match req = Match.newBuilder().setId(UUID.randomUUID().toString()).setPlayers("SAO VS FLA").setComment(s.nextLine()).build();
 
             RequestResponse res = stub.publish(req);
 
