@@ -3,7 +3,7 @@ package com.grpc;
 
 message Match {
 
-  int32 id = 1;
+  string id = 1;
   string players = 2;
   string comment = 3;
 
@@ -25,4 +25,5 @@ service FanService {
   rpc subscribe(Match) returns (RequestResponse);
   rpc unsubscribe(Match) returns(RequestResponse);
   rpc getSubscriberMessages(Match) returns(stream Match);
+  rpc getSubscriberHistoryMessages(Match) returns(stream Match);
 }

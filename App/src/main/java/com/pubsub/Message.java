@@ -1,14 +1,14 @@
 package com.pubsub;
 
 public class Message {
-	private int id;
+	private String id;
 	private String match;
 	private String payload;
 
 	public Message() {
 	}
 
-	public Message(int id, String match, String payload) {
+	public Message(String id, String match, String payload) {
 		this.id = id;
 		this.match = match;
 		this.payload = payload;
@@ -30,11 +30,11 @@ public class Message {
 		this.payload = payload;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setPayload(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

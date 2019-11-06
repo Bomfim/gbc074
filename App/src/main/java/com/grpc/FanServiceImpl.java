@@ -18,13 +18,11 @@ import io.grpc.stub.StreamObserver;
 public class FanServiceImpl extends FanServiceImplBase {
 
     Subscriber fan = new SubscriberImpl();
-    Message m;
 
     @Override
     public void getSubscriberMessages(Match request, StreamObserver<Match> responseObserver) {
         List<Message> subscriberMessages;
 
-        showHistoryMessages(request.getPlayers(), responseObserver);
         subscriberMessages = fan.getSubscriberMessages();
 
         if (!subscriberMessages.isEmpty()) {
@@ -36,6 +34,33 @@ public class FanServiceImpl extends FanServiceImplBase {
             subscriberMessages.clear();
             fan.setSubscriberMessages(subscriberMessages);
         }
+
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getSubscriberHistoryMessages(Match request, StreamObserver<Match> responseObserver) {
+
+        try {
+            File file = new File(request.getPlayers() + ".txt");
+
+            if (file.exists()) {
+                Scanner sc = new Scanner(file);
+
+                while (sc.hasNextLine()) {
+                    String m = sc.nextLine();
+                    String id = m.substring(0, 36);
+                    Match response = Match.newBuilder().setId(id).setPlayers(request.getPlayers())
+                            .setComment(m.substring(37)).build();
+                    responseObserver.onNext(response);
+                }
+                sc.close();
+            }
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
         responseObserver.onCompleted();
     }
 
@@ -66,27 +91,4 @@ public class FanServiceImpl extends FanServiceImplBase {
         responseObserver.onCompleted();
 
     }
-
-    private void showHistoryMessages(String match, StreamObserver<Match> responseObserver) {
-        try {
-            File file = new File(match + ".txt");
-
-            if (file.exists()) {
-                Scanner sc = new Scanner(file);
-
-                while (sc.hasNextLine()) {
-                    String m = sc.nextLine();
-                    int id = Integer.parseInt(m.split("-")[0]);
-                    Match response = Match.newBuilder().setId(id).setPlayers(match).setComment(m.split("-")[1]).build();
-                    responseObserver.onNext(response);
-                }
-                sc.close();
-            }
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        responseObserver.onCompleted();
-    }
-
 }
