@@ -17,7 +17,7 @@ import com.pubsub.service.PubSubService;
 import io.grpc.stub.StreamObserver;
 
 public class ReporterServiceImpl extends ReporterServiceImplBase {
-
+    //TODO:remover hardCode, gerar um id pra cada reporter
     Publisher reporter = new PublisherImpl("192.168.0.1");
     private BlockingQueue<Message> blockingQueue = new LinkedBlockingDeque<Message>();
     private Message message;
@@ -29,7 +29,8 @@ public class ReporterServiceImpl extends ReporterServiceImplBase {
             message = new Message(request.getId(), request.getPlayers(),
                     new SimpleDateFormat("HH:mm").format(new Date()) + ' ' + request.getComment());
             reporter.publish(message);
-            PubSubService.getInstance().broadcast();
+            //TODO:remover hardCode, gerar um id pra cada reporter
+            PubSubService.getInstance("192.168.0.1").broadcast();
             blockingQueue.put(message);
             new RecordThread(blockingQueue).start();
 
