@@ -1,5 +1,8 @@
 package com.grpc;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 import com.grpc.FanServiceGrpc.FanServiceBlockingStub;
@@ -13,7 +16,14 @@ import io.grpc.stub.StreamObserver;
 
 public class Fan {
     public static void main(String[] args) throws Exception {
-        final ManagedChannel channel = ManagedChannelBuilder.forTarget("localhost:50051").usePlaintext(true).build();
+        List<Integer> ports = new ArrayList<>();
+
+        ports.add(50051);
+        ports.add(50052);
+        ports.add(50053);
+        Collections.shuffle(ports);
+
+        final ManagedChannel channel = ManagedChannelBuilder.forTarget("localhost:"+ ports.get(0)).usePlaintext(true).build();
 
         FanServiceBlockingStub blockingStub = FanServiceGrpc.newBlockingStub(channel);
         FanServiceStub stub = FanServiceGrpc.newStub(channel);

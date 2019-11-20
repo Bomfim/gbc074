@@ -1,7 +1,6 @@
 package com.grpc;
 
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 
 import com.grpc.ReporterServiceGrpc.ReporterServiceBlockingStub;
 import com.grpc.StreamingService.Match;
@@ -12,7 +11,14 @@ import io.grpc.ManagedChannelBuilder;
 
 public class Reporter {
     public static void main(String[] args) throws Exception {
-        final ManagedChannel channel = ManagedChannelBuilder.forTarget("localhost:50051").usePlaintext(true).build();
+        List<Integer> ports = new ArrayList<>();
+
+        ports.add(50051);
+        ports.add(50052);
+        ports.add(50053);
+        Collections.shuffle(ports);
+
+        final ManagedChannel channel = ManagedChannelBuilder.forTarget("localhost:"+ ports.get(0)).usePlaintext(true).build();
 
         ReporterServiceBlockingStub stub = ReporterServiceGrpc.newBlockingStub(channel);
         Scanner s = new Scanner(System.in);
