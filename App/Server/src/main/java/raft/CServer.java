@@ -17,7 +17,7 @@ public class CServer extends Thread {
     protected Socket t_server;
     protected DataInputStream s_in;
     protected DataOutputStream s_out;
-    public static final String ERROR = "321165sfg4022";
+    public static final String ERROR = "{error:\"true\"}";
     protected int port;
 
     public CServer(int number, int port) throws IOException {

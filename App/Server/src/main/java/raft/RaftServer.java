@@ -21,12 +21,12 @@ public class RaftServer extends CServer {
     public static final int STATE_LEADER = 0;
     public static final int STATE_FOLLOWER = 1;
     public static final int STATE_CANDIDATE = 2;
-    public static final int SEND_TIMEOUT = 25000; // waiting time to connect with other server
+    public static final int SEND_TIMEOUT = 25000; //25000,2000; // waiting time to connect with other server
     public static final String RPC_VOTE = "RequestVote";
     public static final String RPC_APPEND = "AppendEntries";
     public static final String CLIENT_REQUEST = "ClientRequest";
-    private int electionTimeout = 25000; // initialize to 5 seconds without a heartbeat => new election
-    private int heartBeatPeriod = 20000; // time between leader's heartbeats
+    private int electionTimeout = 25000; //25000,2000 initialize to 5 seconds without a heartbeat => new election
+    private int heartBeatPeriod = 25000; //25000,250 time between leader's heartbeats
     private int state; // current state of this server
     private RaftServerPool pool; // pool that this server belongs
     public int serverId; // id of this server
@@ -83,72 +83,71 @@ public class RaftServer extends CServer {
 
         // read message from stream and parse as json object
         JsonObject message = JsonObject.readFrom(this.read());
-        if (message==null || message.get("rpc-command").isNull() || message.toString().contains("isUser"))
-            return;
+        if (message!=null || !message.get("rpc-command").isNull() || !message.toString().contains("isUser")) {
 
-        // extract rpc command
-        String rpcCommand = message.get("rpc-command").asString();
+            // extract rpc command
+            String rpcCommand = message.get("rpc-command").asString();
 
 
-        // I'm a follower or a candidate, I accept a log replication op
-        if ((state == STATE_FOLLOWER || state == STATE_CANDIDATE) && rpcCommand.equals(RPC_APPEND)) {
+            // I'm a follower or a candidate, I accept a log replication op
+            if ((state == STATE_FOLLOWER || state == STATE_CANDIDATE) && rpcCommand.equals(RPC_APPEND)) {
 
-            int sTerm= message.get("term").asInt();
-            //determine if it is a heartbeat from leader (void payload)
-            if ("".equals(message.get("payload").asString())) {
+                int sTerm = message.get("term").asInt();
+                //determine if it is a heartbeat from leader (void payload)
+                if ("".equals(message.get("payload").asString())) {
+                    this.write(
+                            handleHeartbeat(message).toString()
+                    );
+                } else { // it is a regular append entries
+                    this.write(
+                            response.resultAppend(
+                                    this.currentTerm,
+                                    this.AppendEntries(
+                                            message.get("term").asInt(),
+                                            message.get("leaderId").asInt(),
+                                            message.get("prevLogIndex").asInt(),
+                                            message.get("prevLogTerm").asInt(),
+                                            message.get("payload").asObject(),
+                                            message.get("leaderCommit").asInt()
+                                    ) ? 1 : 0
+                            ).toString());
+                }
+
+                // perform an step down if necessary based on the sTerm
+                stepDown(sTerm);
+
+            }
+
+
+            // I'm a follower or a candidate and I receive a request for vote
+            if ((state == STATE_FOLLOWER || state == STATE_CANDIDATE) && rpcCommand.equals(RPC_VOTE)) {
                 this.write(
-                        handleHeartbeat(message).toString()
-                );
-            } else { // it is a regular append entries
-                this.write(
-                        response.resultAppend(
+                        response.resultVote(
                                 this.currentTerm,
-                                this.AppendEntries(
+                                this.requestVote(
                                         message.get("term").asInt(),
-                                        message.get("leaderId").asInt(),
-                                        message.get("prevLogIndex").asInt(),
-                                        message.get("prevLogTerm").asInt(),
-                                        message.get("payload").asObject(),
-                                        message.get("leaderCommit").asInt()
+                                        message.get("candidateId").asInt(),
+                                        message.get("lastLogIndex").asInt(),
+                                        message.get("lastLogTerm").asInt()
                                 ) ? 1 : 0
                         ).toString());
             }
 
-            // perform an step down if necessary based on the sTerm
-            stepDown(sTerm);
+            // I'm a follower, I accept a client request and I redirect to the leader
+            // TODO: redirect to leader
+            if (state == STATE_FOLLOWER && rpcCommand.equals(CLIENT_REQUEST)) {
 
+            }
+
+            // I'm the leader, I accept client operation
+            if (state == STATE_LEADER && rpcCommand.equals(CLIENT_REQUEST)) {
+                // append to my log
+                // and I will try to replicate it
+                // if I will have replicated on the majority of the servers
+                // the this entry is commited, I can pass it to the state machine and
+                // reply the client
+            }
         }
-
-
-        // I'm a follower or a candidate and I receive a request for vote
-        if ((state == STATE_FOLLOWER || state == STATE_CANDIDATE) && rpcCommand.equals(RPC_VOTE)) {
-            this.write(
-                    response.resultVote(
-                            this.currentTerm,
-                            this.requestVote(
-                                    message.get("term").asInt(),
-                                    message.get("candidateId").asInt(),
-                                    message.get("lastLogIndex").asInt(),
-                                    message.get("lastLogTerm").asInt()
-                            ) ? 1 : 0
-                    ).toString());
-        }
-
-        // I'm a follower, I accept a client request and I redirect to the leader
-        // TODO: redirect to leader
-        if (state == STATE_FOLLOWER && rpcCommand.equals(CLIENT_REQUEST)) {
-
-        }
-
-        // I'm the leader, I accept client operation
-        if (state == STATE_LEADER && rpcCommand.equals(CLIENT_REQUEST)) {
-            // append to my log
-            // and I will try to replicate it
-            // if I will have replicated on the majority of the servers
-            // the this entry is commited, I can pass it to the state machine and
-            // reply the client
-        }
-
     }
 
 
