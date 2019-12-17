@@ -1,5 +1,7 @@
 package raft;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
 import java.util.Timer;
 
@@ -16,13 +18,18 @@ public class Main {
 
     public static void main(String[] args) {
 	    logger.debug("Raft Initialize");
-        int numberOfServers = 5;
+        int numberOfServers = 0;
+        Properties props = new Properties();
+        try {
+            FileInputStream file = new FileInputStream(
+                    "./config.properties");
+            props.load(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // take arguments
-
-       numberOfServers = DEFAULT_NUMBER_OF_SERVERS;
-       logger.debug("Using default number of servers " + DEFAULT_NUMBER_OF_SERVERS);
-
+        numberOfServers = Integer.valueOf(props.getProperty("prop.replicas.quantidade"));
 
         if (numberOfServers<=0) {
             numberOfServers=DEFAULT_NUMBER_OF_SERVERS;
