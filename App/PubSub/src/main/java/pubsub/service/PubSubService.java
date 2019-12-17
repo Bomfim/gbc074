@@ -1,12 +1,7 @@
 package pubsub.service;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
+
 import pubsub.Message;
 import pubsub.subscriber.Subscriber;
 
@@ -17,7 +12,7 @@ public final class PubSubService {
 	public static synchronized PubSubService getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new PubSubService();
-		}	
+		}
 		return INSTANCE;
 	}
 
@@ -66,7 +61,7 @@ public final class PubSubService {
 				Message message = messagesQueue.remove();
 				String match = message.getMatch();
 
-				Set<Subscriber> subscribersOfMatch = subscribersMatchMap.get(match);
+				Set<Subscriber> subscribersOfMatch = subscribersMatchMap.getOrDefault(match, Collections.emptySet());
 
 				for (Subscriber subscriber : subscribersOfMatch) {
 					// add broadcasted message to subscribers message queue

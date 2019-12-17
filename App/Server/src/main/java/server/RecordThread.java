@@ -1,11 +1,11 @@
 package server;
 
+import pubsub.Message;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import pubsub.Message;
 
 public class RecordThread extends Thread {
     private Message message;
@@ -17,7 +17,7 @@ public class RecordThread extends Thread {
     @Override
     public void run() {
         try {
-            File file = new File(message.getMatch()+".txt");
+            File file = new File(message.getMatch() + ".txt");
 
             if (file.createNewFile()) {
                 FileWriter writer = new FileWriter(file);

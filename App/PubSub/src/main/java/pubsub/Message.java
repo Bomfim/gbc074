@@ -4,7 +4,8 @@ public class Message {
 	private String match;
 	private String payload;
 
-	public Message() {}
+	public Message() {
+	}
 
 	public Message(String match, String payload) {
 		this.match = match;
