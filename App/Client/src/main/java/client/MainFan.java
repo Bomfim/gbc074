@@ -1,17 +1,9 @@
 package client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class MainFan {
 
@@ -19,7 +11,19 @@ public class MainFan {
 
 		String hostname = "127.0.0.1", text;
 		List<Integer> portList = new ArrayList<>() ;
-		for(int i = 1; i <= 5 ; i++){
+        int numberOfServers = 0;
+        Properties props = new Properties();
+        try {
+            FileInputStream file = new FileInputStream(
+                    "./config.properties");
+            props.load(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // take arguments
+        numberOfServers = Integer.valueOf(props.getProperty("prop.replicas.quantidade"));
+		for(int i = 1; i <= numberOfServers ; i++){
 			portList.add(5000 + i);
 		}
 		Collections.shuffle(portList) ;

@@ -3,10 +3,7 @@ package client;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class MainRep {
 
@@ -14,11 +11,22 @@ public class MainRep {
 
 		String hostname = "localhost", text;
 		List<Integer> portList = new ArrayList<>() ;
-		for(int i = 1; i <= 5 ; i++){
+		int numberOfServers = 0;
+		Properties props = new Properties();
+		try {
+			FileInputStream file = new FileInputStream(
+					"./config.properties");
+			props.load(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// take arguments
+		numberOfServers = Integer.valueOf(props.getProperty("prop.replicas.quantidade"));
+		for(int i = 1; i <= numberOfServers ; i++){
 			portList.add(5000 + i);
 		}
 		Collections.shuffle(portList) ;
-
 		Scanner scanner = new Scanner(System.in);
 
 		try (Socket socket = new Socket(hostname, portList.get(0))) {
