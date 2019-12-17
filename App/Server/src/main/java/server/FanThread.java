@@ -29,7 +29,6 @@ public class FanThread extends Thread {
 
             Subscriber fan = new SubscriberImpl();
             String match = "SAO vs FLA";
-            // TODO treat witch match fan will choose.
             fan.addSubscriber(match);
 
             showHistoryMessages(match, writer);

@@ -51,5 +51,5 @@ E por último para rodar o servidor:
 
 E o cliente:
     
-    java -cp .\Client\target\Client-0.0.1-SNAPSHOT.jar client.Main
+    java -cp .\Client\target\Client-0.0.1-SNAPSHOT.jar client.MainFan
 
