@@ -1,6 +1,7 @@
 package client;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -40,12 +41,13 @@ public class MainRep {
 			System.out.println("Connecting to " + hostname+ " on port " +  portList.get(0));
 			System.out.println("Just connected to "+ socket.getRemoteSocketAddress());
 			System.out.println("Hello from "+ socket.getLocalSocketAddress());
-			writer.println("isUser-isReporter");
-
+			OutputStream outToServer = socket.getOutputStream();
+			DataOutputStream out = new DataOutputStream(outToServer);
+			out.writeUTF("{\"isUser\":true,\"isReporter\":true}");
 				System.out.println("I'm the reporter \\o//");
 				while (true) {
 					text = scanner.nextLine();
-					writer.println(text);
+					out.writeUTF(text);
 				}
 		} catch (UnknownHostException ex) {
 			scanner.close();

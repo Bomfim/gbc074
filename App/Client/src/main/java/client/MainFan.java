@@ -41,8 +41,9 @@ public class MainFan {
 			System.out.println("Connecting to " + hostname+ " on port " +  portList.get(0));
 			System.out.println("Just connected to "+ socket.getRemoteSocketAddress());
 			System.out.println("Hello from "+ socket.getLocalSocketAddress());
-			writer.println("isUser");
-			System.out.println("I'm a fan!");
+			OutputStream outToServer = socket.getOutputStream();
+			DataOutputStream out = new DataOutputStream(outToServer);
+			out.writeUTF("{\"isUser\":true}");System.out.println("I'm a fan!");
 			 while (true) {
 					text = reader.readLine();
 					System.out.println(text);

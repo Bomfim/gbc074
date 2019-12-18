@@ -1,5 +1,6 @@
 package raft;
 
+import com.eclipsesource.json.JsonObject;
 import server.FanThread;
 import server.ReporterThread;
 
@@ -17,7 +18,7 @@ public class CServer extends Thread {
     protected Socket t_server;
     protected DataInputStream s_in;
     protected DataOutputStream s_out;
-    public static final String ERROR = "{error:\"true\"}";
+    public static final String ERROR = "{\"error\":true}";
     protected int port;
 
     public CServer(int number, int port) throws IOException {
@@ -32,8 +33,6 @@ public class CServer extends Thread {
 
     public void run() {
 
-        boolean isReporter = false;
-
         try {
 
             System.out.println("Server is listening on port " + port);
@@ -43,22 +42,9 @@ public class CServer extends Thread {
                     logger.debug("Waiting for client on port " +serverSocket.getLocalPort() + "...");
                     logger.debug("Just connected to "+ this.t_server.getRemoteSocketAddress());
 
-                        InputStream input = this.t_server.getInputStream();
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-
-                        String text = reader.readLine();
-                        if (text.startsWith("isUser")) {
-                            if (text.endsWith("isReporter")) {
-                                new ReporterThread(this.t_server).start();
-                            } else {
-                                new FanThread(this.t_server).start();
-                            }
-                        }
-                        else{
-                            this.s_in = new DataInputStream(this.t_server.getInputStream());
-                            this.s_out = new DataOutputStream(this.t_server.getOutputStream());
-                            this.process();
-                        }
+                this.s_in = new DataInputStream(this.t_server.getInputStream());
+                this.s_out = new DataOutputStream(this.t_server.getOutputStream());
+                this.process();
             }
 
         } catch (IOException ex) {
