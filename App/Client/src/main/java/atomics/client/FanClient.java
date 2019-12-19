@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class FanClient extends StateMachine {
-    public static void main(String[] args, String[] args2) {
+    public static void main(String[] args) {
 
         List<Address> addresses = new LinkedList<>();
 
@@ -28,7 +28,7 @@ public class FanClient extends StateMachine {
                         .build());
         CopycatClient client = builder.build();
 
-        for (int i = 0; i < args.length; i += 2) {
+        for (int i = 1; i < args.length; i += 2) {
             Address address = new Address(args[i], Integer.parseInt(args[i + 1]));
             addresses.add(address);
         }
@@ -37,7 +37,7 @@ public class FanClient extends StateMachine {
         future.join();
 
         try {
-            if(args2[0].equals("isUnitTest")){
+            if(args[0].equals("isUnitTest")){
                 Match match = client.submit(new GetMatchQuery(1)).get();
                 System.out.println(match);
             }else {

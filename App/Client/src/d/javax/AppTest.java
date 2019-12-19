@@ -29,11 +29,10 @@ public class AppTest
         String[] args2 = new String[]{"2", "127.0.0.1","5000", "127.0.0.1", "5001", "127.0.0.1", "5002"};
         MatchMachine.main(args2);
 
-        String[] argsR = new String[]{"127.0.0.1","5000", "127.0.0.1", "5001", "127.0.0.1", "5002"};
-        String[] argsClientes = new String[]{"isUnitTest"};
-        ReporterClient.main(argsR, argsClientes);
+        String[] argsR = new String[]{"isUnitTest","127.0.0.1","5000", "127.0.0.1", "5001", "127.0.0.1", "5002"};
+        ReporterClient.main(argsR);
 
-        String[] argsF = new String[]{"127.0.0.1","5000", "127.0.0.1", "5001", "127.0.0.1", "5002"};
-        FanClient.main(argsF, argsClientes);
+        String[] argsF = new String[]{"isUnitTest","127.0.0.1","5000", "127.0.0.1", "5001", "127.0.0.1", "5002"};
+        FanClient.main(argsF);
     }
 }

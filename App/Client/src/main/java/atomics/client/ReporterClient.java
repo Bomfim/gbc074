@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class ReporterClient extends StateMachine
 {
-    public static void main( String[] args, String[] args2 ){
+    public static void main( String[] args ){
         List<Address> addresses = new LinkedList<>();
 
         CopycatClient.Builder builder = CopycatClient.builder()
@@ -24,7 +24,7 @@ public class ReporterClient extends StateMachine
                         .build());
         CopycatClient client = builder.build();
 
-        for(int i = 0; i <args.length;i+=2)
+        for(int i = 1; i <args.length;i+=2)
         {
             Address address = new Address(args[i], Integer.parseInt(args[i+1]));
             addresses.add(address);
@@ -33,7 +33,7 @@ public class ReporterClient extends StateMachine
         CompletableFuture<CopycatClient> future = client.connect(addresses);
         future.join();
 
-        if(args2[0].equals("isUnitTest")){
+        if(args[0].equals("isUnitTest")){
             CompletableFuture[] futures = new CompletableFuture[]{
                     client.submit(new AddMatchCommand(1, "COR X PAL")),
                     client.submit(new AddMatchCommentCommand(1, "corinthians com a bola")),

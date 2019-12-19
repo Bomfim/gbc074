@@ -41,15 +41,16 @@ Na raíz do diretório clonado execute:
 
     mvn clean install
 
-Depois,
+Servidores"
 
-    mvn package
+mvn exec:java -Dexec.mainClass="atomics.server.MatchMachine" -Dexec.args="0 127.0.0.1 5000 127.0.0.1 5001 127.0.0.1 5002"
 
-E por último, entre na pasta App daí para rodar o servidor:
+mvn exec:java -Dexec.mainClass="atomics.server.MatchMachine" -Dexec.args="1 127.0.0.1 5000 127.0.0.1 5001 127.0.0.1 5002"
 
-    java -cp '.\Server\target\Server-0.0.1-SNAPSHOT.jar;.\PubSub\target\PubSub-0.0.1-SNAPSHOT.jar' server.Main
+mvn exec:java -Dexec.mainClass="atomics.server.MatchMachine" -Dexec.args="2 127.0.0.1 5000 127.0.0.1 5001 127.0.0.1 5002"
 
-E o cliente:
-    
-    java -cp .\Client\target\Client-0.0.1-SNAPSHOT.jar client.MainFan
+Clientes:
 
+mvn exec:java -Dexec.mainClass="atomics.client.ReporterClient" -Dexec.args="client 127.0.0.1 5000 127.0.0.1 5001 127.0.0.1 5002"
+
+mvn exec:java -Dexec.mainClass="atomics.client.FanClient" -Dexec.args="client 127.0.0.1 5000 127.0.0.1 5001 127.0.0.1 5002"
