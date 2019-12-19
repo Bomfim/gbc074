@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class ReporterClient extends StateMachine
 {
-    public static void main( String[] args ){
+    public static void main( String[] args, String[] args2 ){
         List<Address> addresses = new LinkedList<>();
 
         CopycatClient.Builder builder = CopycatClient.builder()
@@ -33,14 +33,29 @@ public class ReporterClient extends StateMachine
         CompletableFuture<CopycatClient> future = client.connect(addresses);
         future.join();
 
-        client.submit(new AddMatchCommand(1, "COR X PAL"));
+        if(args2[0].equals("isUnitTest")){
+            CompletableFuture[] futures = new CompletableFuture[]{
+                    client.submit(new AddMatchCommand(1, "COR X PAL")),
+                    client.submit(new AddMatchCommentCommand(1, "corinthians com a bola")),
+                    client.submit(new AddMatchCommentCommand(1, "palmeiras esta jogando mal")),
+                    client.submit(new AddMatchCommentCommand(1, "gooool do corinthians")),
+                    client.submit(new AddMatchCommentCommand(1, "torcida vai a loucura")),
+                    client.submit(new AddMatchCommentCommand(1, "palmeiras perdeu"))
+            };
 
-        while(true){
-            System.out.println("\n=========================");
-            System.out.println("|   faca um comentario   ");
-            System.out.println("=========================\n");
-            Scanner s = new Scanner(System.in);
-            String commentario = s.next();
-            client.submit(new AddMatchCommentCommand(1, commentario));
+            CompletableFuture.allOf(futures).thenRun(() -> System.out.println("Commands completed!"));
+
+        }else {
+
+            client.submit(new AddMatchCommand(1, "COR X PAL"));
+
+            while (true) {
+                System.out.println("\n=========================");
+                System.out.println("|   faca um comentario   ");
+                System.out.println("=========================\n");
+                Scanner s = new Scanner(System.in);
+                String commentario = s.next();
+                client.submit(new AddMatchCommentCommand(1, commentario));
+            }
         }
     }}

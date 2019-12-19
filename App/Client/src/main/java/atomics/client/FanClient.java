@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class FanClient extends StateMachine {
-    public static void main(String[] args) {
+    public static void main(String[] args, String[] args2) {
 
         List<Address> addresses = new LinkedList<>();
 
@@ -37,15 +37,20 @@ public class FanClient extends StateMachine {
         future.join();
 
         try {
-            Match match = client.submit(new GetMatchQuery(1)).get();
-            System.out.println(match);
+            if(args2[0].equals("isUnitTest")){
+                Match match = client.submit(new GetMatchQuery(1)).get();
+                System.out.println(match);
+            }else {
+                Match match = client.submit(new GetMatchQuery(1)).get();
+                System.out.println(match);
 
-            int lentgh = 0;
-            while (true) {
-                Match updatedMatch = client.submit(new GetMatchQuery(1)).get();
-                if (updatedMatch != null && updatedMatch.getComment().length() > lentgh) {
-                    System.out.println(client.submit(new GetLastMatchCommentQuery(1)).get());
-                    lentgh = updatedMatch.getComment().length();
+                int lentgh = 0;
+                while (true) {
+                    Match updatedMatch = client.submit(new GetMatchQuery(1)).get();
+                    if (updatedMatch != null && updatedMatch.getComment().length() > lentgh) {
+                        System.out.println(client.submit(new GetLastMatchCommentQuery(1)).get());
+                        lentgh = updatedMatch.getComment().length();
+                    }
                 }
             }
 

@@ -30,9 +30,10 @@ public class AppTest
         MatchMachine.main(args2);
 
         String[] argsR = new String[]{"127.0.0.1","5000", "127.0.0.1", "5001", "127.0.0.1", "5002"};
-        ReporterClient.main(argsR);
+        String[] argsClientes = new String[]{"isUnitTest"};
+        ReporterClient.main(argsR, argsClientes);
 
         String[] argsF = new String[]{"127.0.0.1","5000", "127.0.0.1", "5001", "127.0.0.1", "5002"};
-        FanClient.main(argsF);
+        FanClient.main(argsF, argsClientes);
     }
 }
