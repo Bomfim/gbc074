@@ -10,6 +10,7 @@ import io.atomix.copycat.server.StateMachine;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 
 public class ReporterClient extends StateMachine
@@ -32,13 +33,14 @@ public class ReporterClient extends StateMachine
         CompletableFuture<CopycatClient> future = client.connect(addresses);
         future.join();
 
-        CompletableFuture[] futures = new CompletableFuture[]{
-                client.submit(new AddMatchCommand(1, "COR X PAL")),
-                client.submit(new AddMatchCommentCommand(1, "gol do corinthians")),
-                client.submit(new AddMatchCommentCommand(1, "quase mais um do corinthians")),
-                client.submit(new AddMatchCommentCommand(1, "segundo gol do corinthians"))
-        };
+        client.submit(new AddMatchCommand(1, "COR X PAL"));
 
-        CompletableFuture.allOf(futures).thenRun(() -> System.out.println("Commands completed!"));
-    }
-}
+        while(true){
+            System.out.println("\n=========================");
+            System.out.println("|   faca um comentario   ");
+            System.out.println("=========================\n");
+            Scanner s = new Scanner(System.in);
+            String commentario = s.next();
+            client.submit(new AddMatchCommentCommand(1, commentario));
+        }
+    }}
