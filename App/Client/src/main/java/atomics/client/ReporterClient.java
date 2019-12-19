@@ -40,13 +40,5 @@ public class ReporterClient extends StateMachine
         };
 
         CompletableFuture.allOf(futures).thenRun(() -> System.out.println("Commands completed!"));
-
-        try {
-            System.out.println("-: " + client.submit(new GetMatchQuery(1)).get());
-        } catch (Exception e)
-        {
-            System.out.println("Commands may have failed.");
-            e.printStackTrace();
-        }
     }
 }

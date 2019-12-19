@@ -33,6 +33,7 @@ public class AppTest
         ReporterClient.main(argsR);
 
         String[] argsF = new String[]{"127.0.0.1","5000", "127.0.0.1", "5001", "127.0.0.1", "5002"};
-        FanClient.main(argsF);
+        String[] argsF2 = new String[]{"1"};
+        FanClient.main(argsF, argsF2);
     }
 }

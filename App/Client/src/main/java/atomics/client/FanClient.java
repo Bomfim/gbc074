@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class FanClient extends StateMachine
 {
-    public static void main( String[] args ){
+    public static void main( String[] args , String[] ars2){
     	List<Address> addresses = new LinkedList<>();
 
         CopycatClient.Builder builder = CopycatClient.builder()
