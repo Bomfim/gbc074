@@ -4,6 +4,7 @@ package atomics.server;
 
 import atomics.command.AddMatchCommand;
 import atomics.command.AddMatchCommentCommand;
+import atomics.command.GetLastMatchCommentQuery;
 import atomics.command.GetMatchQuery;
 import atomics.type.Match;
 import io.atomix.catalyst.transport.Address;
@@ -62,6 +63,21 @@ public class MatchMachine extends StateMachine
             System.out.println("Reporter:" + gvq.comment);
             return m;
         }finally{
+            commit.close();
+        }
+    }
+
+    public String GetLastMatchComment(Commit<GetLastMatchCommentQuery> commit){
+        try{
+            GetLastMatchCommentQuery gvq = commit.operation();
+
+            Match updatedMatch = matchHashMap.get(gvq.id);
+
+            String[] arrSplit = updatedMatch.getComment().split("-");
+
+            return arrSplit[arrSplit.length -1];
+            }
+        finally{
             commit.close();
         }
     }

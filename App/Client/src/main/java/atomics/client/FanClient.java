@@ -2,7 +2,9 @@ package atomics.client;
 
 import atomics.command.AddMatchCommand;
 import atomics.command.AddMatchCommentCommand;
+import atomics.command.GetLastMatchCommentQuery;
 import atomics.command.GetMatchQuery;
+import atomics.type.Match;
 import io.atomix.catalyst.transport.Address;
 import io.atomix.catalyst.transport.netty.NettyTransport;
 import io.atomix.copycat.client.CopycatClient;
@@ -15,49 +17,41 @@ import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class FanClient extends StateMachine
-{
-    public static void main( String[] args){
-        long TEMPO = (1000 * 5); // chama o método a cada 3 segundos
+public class FanClient extends StateMachine {
+    public static void main(String[] args) {
 
         List<Address> addresses = new LinkedList<>();
 
         CopycatClient.Builder builder = CopycatClient.builder()
-                                                     .withTransport( NettyTransport.builder()
-                                                     .withThreads(4)
-                                                     .build());
+                .withTransport(NettyTransport.builder()
+                        .withThreads(4)
+                        .build());
         CopycatClient client = builder.build();
 
-        for(int i = 0; i <args.length;i+=2)
-    	{
-            Address address = new Address(args[i], Integer.parseInt(args[i+1]));
-    		addresses.add(address);
-    	}
-        
+        for (int i = 0; i < args.length; i += 2) {
+            Address address = new Address(args[i], Integer.parseInt(args[i + 1]));
+            addresses.add(address);
+        }
+
         CompletableFuture<CopycatClient> future = client.connect(addresses);
         future.join();
 
         try {
-            int delay = 5000;   // delay de 5 seg.
-            int interval = 1000;  // intervalo de 1 seg.
-            Timer timer = new Timer();
+            Match match = client.submit(new GetMatchQuery(1)).get();
+            System.out.println(match);
 
-            timer.scheduleAtFixedRate(new TimerTask() {
-                public void run() {
-                    try {
-                        System.out.println(client.submit(new GetMatchQuery(1)).get());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
+            int lentgh = 0;
+            while (true) {
+                Match updatedMatch = client.submit(new GetMatchQuery(1)).get();
+                if (updatedMatch != null && updatedMatch.getComment().length() > lentgh) {
+                    System.out.println(client.submit(new GetLastMatchCommentQuery(1)).get());
+                    lentgh = updatedMatch.getComment().length();
                 }
-            }, delay, interval);
+            }
 
-        } catch (Exception e)
-        {
-        	System.out.println("Commands may have failed.");
-        	e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Commands may have failed.");
+            e.printStackTrace();
         }
     }
 }
