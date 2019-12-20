@@ -2,10 +2,7 @@ package atomics.server;
 
 
 
-import atomics.command.AddMatchCommand;
-import atomics.command.AddMatchCommentCommand;
-import atomics.command.GetLastMatchCommentQuery;
-import atomics.command.GetMatchQuery;
+import atomics.command.*;
 import atomics.type.Match;
 import io.atomix.catalyst.transport.Address;
 import io.atomix.catalyst.transport.netty.NettyTransport;
@@ -16,10 +13,7 @@ import io.atomix.copycat.server.storage.Storage;
 import io.atomix.copycat.server.storage.StorageLevel;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.atomix.copycat.server.CopycatServer.Builder;
 import static io.atomix.copycat.server.CopycatServer.builder;
@@ -32,8 +26,6 @@ public class MatchMachine extends StateMachine
         try{
             AddMatchCommand avc = commit.operation();
             Match m = new Match(avc.id, avc.comment);
-            
-            //System.out.println("Adding " + m );
 
             return matchHashMap.putIfAbsent(avc.id, m ) == null;
         }finally{
@@ -43,11 +35,9 @@ public class MatchMachine extends StateMachine
 
     public Match GetMatch(Commit<GetMatchQuery> commit){
     	try{
-                GetMatchQuery gvq = commit.operation();
-    		//System.out.println("Matches:" + matchHashMap);
+    	    GetMatchQuery gvq = commit.operation();
 
             Match result = matchHashMap.get(gvq.id);
-    		//System.out.println("GetMatch " + gvq.id + " = " + result);
     		return result;
         }finally{
             commit.close();
@@ -77,6 +67,19 @@ public class MatchMachine extends StateMachine
 
             return arrSplit[arrSplit.length -1];
             }
+        finally{
+            commit.close();
+        }
+    }
+
+    public List<Match> GetAllMatches(Commit<GetAllMatchesQuery> commit){
+        try{
+            GetAllMatchesQuery gvq = commit.operation();
+
+            List result = new ArrayList(matchHashMap.values());
+
+        return result;
+        }
         finally{
             commit.close();
         }
